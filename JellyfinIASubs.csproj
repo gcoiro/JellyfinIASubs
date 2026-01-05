@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\configPage.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Jellyfin.Controller" Version="10.9.0" PrivateAssets="all" />
+    <PackageReference Include="Jellyfin.Model" Version="10.9.0" PrivateAssets="all" />
+    <PackageReference Include="MediaBrowser.Common" Version="10.9.0" PrivateAssets="all" />
+    <PackageReference Include="MediaBrowser.Controller" Version="10.9.0" PrivateAssets="all" />
+  </ItemGroup>
+</Project>

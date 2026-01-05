@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Jellyfin AI Subs</title>
+</head>
+<body>
+    <div id="aiSubsConfigPage"
+         data-role="page"
+         class="page type-interior pluginConfigurationPage"
+         data-require="emby-input,emby-select,emby-button,emby-checkbox">
+        <div class="content-primary">
+            <form id="aiSubsConfigForm">
+                <div class="inputContainer">
+                    <label class="inputLabel" for="aiProvider">Provider</label>
+                    <select is="emby-select" id="aiProvider" class="emby-select">
+                        <option value="Local">Local</option>
+                        <option value="OpenAi">OpenAI</option>
+                        <option value="AzureOpenAi">Azure OpenAI</option>
+                        <option value="Aws">AWS</option>
+                        <option value="Custom">Custom</option>
+                    </select>
+                </div>
+
+                <div class="inputContainer">
+                    <label class="inputLabel" for="defaultLanguage">Default Language</label>
+                    <input is="emby-input" id="defaultLanguage" type="text" />
+                </div>
+
+                <div class="inputContainer">
+                    <label class="inputLabel" for="timeoutSeconds">Timeout (seconds)</label>
+                    <input is="emby-input" id="timeoutSeconds" type="number" min="1" />
+                </div>
+
+                <div class="inputContainer">
+                    <label class="inputLabel" for="overwriteExisting">Overwrite Existing</label>
+                    <input is="emby-checkbox" id="overwriteExisting" type="checkbox" />
+                </div>
+
+                <h2>Common / Custom</h2>
+                <div class="inputContainer">
+                    <label class="inputLabel" for="baseUrl">Base URL</label>
+                    <input is="emby-input" id="baseUrl" type="text" />
+                </div>
+                <div class="inputContainer">
+                    <label class="inputLabel" for="generatePath">Generate Path</label>
+                    <input is="emby-input" id="generatePath" type="text" />
+                </div>
+                <div class="inputContainer">
+                    <label class="inputLabel" for="apiKey">API Key</label>
+                    <input is="emby-input" id="apiKey" type="password" />
+                </div>
+                <div class="inputContainer">
+                    <label class="inputLabel" for="useBearerAuth">Use Bearer Auth</label>
+                    <input is="emby-checkbox" id="useBearerAuth" type="checkbox" />
+                </div>
+                <div class="inputContainer">
+                    <label class="inputLabel" for="model">Model</label>
+                    <input is="emby-input" id="model" type="text" />
+                </div>
+
+                <div id="localSettings">
+                    <h2>Local Provider</h2>
+                    <div class="inputContainer">
+                        <label class="inputLabel" for="localHost">Host</label>
+                        <input is="emby-input" id="localHost" type="text" />
+                    </div>
+                    <div class="inputContainer">
+                        <label class="inputLabel" for="localToken">Token</label>
+                        <input is="emby-input" id="localToken" type="password" />
+                    </div>
+                    <div class="inputContainer">
+                        <label class="inputLabel" for="localModel">Model</label>
+                        <input is="emby-input" id="localModel" type="text" />
+                    </div>
+                </div>
+
+                <div id="openAiSettings">
+                    <h2>OpenAI</h2>
+                    <div class="inputContainer">
+                        <label class="inputLabel" for="openAiApiKey">API Key</label>
+                        <input is="emby-input" id="openAiApiKey" type="password" />
+                    </div>
+                    <div class="inputContainer">
+                        <label class="inputLabel" for="openAiModel">Model</label>
+                        <input is="emby-input" id="openAiModel" type="text" />
+                    </div>
+                </div>
+
+                <div id="azureSettings">
+                    <h2>Azure OpenAI</h2>
+                    <div class="inputContainer">
+                        <label class="inputLabel" for="azureEndpoint">Endpoint</label>
+                        <input is="emby-input" id="azureEndpoint" type="text" />
+                    </div>
+                    <div class="inputContainer">
+                        <label class="inputLabel" for="azureApiKey">API Key</label>
+                        <input is="emby-input" id="azureApiKey" type="password" />
+                    </div>
+                    <div class="inputContainer">
+                        <label class="inputLabel" for="azureDeployment">Deployment</label>
+                        <input is="emby-input" id="azureDeployment" type="text" />
+                    </div>
+                </div>
+
+                <div id="awsSettings">
+                    <h2>AWS</h2>
+                    <div class="inputContainer">
+                        <label class="inputLabel" for="awsAccessKeyId">Access Key ID</label>
+                        <input is="emby-input" id="awsAccessKeyId" type="text" />
+                    </div>
+                    <div class="inputContainer">
+                        <label class="inputLabel" for="awsSecretAccessKey">Secret Access Key</label>
+                        <input is="emby-input" id="awsSecretAccessKey" type="password" />
+                    </div>
+                    <div class="inputContainer">
+                        <label class="inputLabel" for="awsRegion">Region</label>
+                        <input is="emby-input" id="awsRegion" type="text" />
+                    </div>
+                    <div class="inputContainer">
+                        <label class="inputLabel" for="awsModel">Model</label>
+                        <input is="emby-input" id="awsModel" type="text" />
+                    </div>
+                </div>
+
+                <div>
+                    <button is="emby-button" type="submit" class="raised button-submit">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        (function () {
+            var pluginId = 'c6a0d0f7-59f0-4b08-9f86-5f7f3a0b2f6a';
+            var page = document.getElementById('aiSubsConfigPage');
+            var form = document.getElementById('aiSubsConfigForm');
+            var providerSelect = document.getElementById('aiProvider');
+
+            function setProviderVisibility(provider) {
+                document.getElementById('localSettings').style.display = provider === 'Local' ? 'block' : 'none';
+                document.getElementById('openAiSettings').style.display = provider === 'OpenAi' ? 'block' : 'none';
+                document.getElementById('azureSettings').style.display = provider === 'AzureOpenAi' ? 'block' : 'none';
+                document.getElementById('awsSettings').style.display = provider === 'Aws' ? 'block' : 'none';
+            }
+
+            providerSelect.addEventListener('change', function () {
+                setProviderVisibility(providerSelect.value);
+            });
+
+            page.addEventListener('pageshow', function () {
+                Dashboard.showLoadingMsg();
+                ApiClient.getPluginConfiguration(pluginId).then(function (config) {
+                    config.Local = config.Local || {};
+                    config.OpenAi = config.OpenAi || {};
+                    config.AzureOpenAi = config.AzureOpenAi || {};
+                    config.Aws = config.Aws || {};
+
+                    providerSelect.value = config.Provider || 'Local';
+                    setProviderVisibility(providerSelect.value);
+
+                    document.getElementById('defaultLanguage').value = config.DefaultLanguage || '';
+                    document.getElementById('timeoutSeconds').value = config.TimeoutSeconds || 0;
+                    document.getElementById('overwriteExisting').checked = !!config.OverwriteExisting;
+
+                    document.getElementById('baseUrl').value = config.BaseUrl || '';
+                    document.getElementById('generatePath').value = config.GeneratePath || '';
+                    document.getElementById('apiKey').value = config.ApiKey || '';
+                    document.getElementById('useBearerAuth').checked = !!config.UseBearerAuth;
+                    document.getElementById('model').value = config.Model || '';
+
+                    document.getElementById('localHost').value = config.Local.Host || '';
+                    document.getElementById('localToken').value = config.Local.Token || '';
+                    document.getElementById('localModel').value = config.Local.Model || '';
+
+                    document.getElementById('openAiApiKey').value = config.OpenAi.ApiKey || '';
+                    document.getElementById('openAiModel').value = config.OpenAi.Model || '';
+
+                    document.getElementById('azureEndpoint').value = config.AzureOpenAi.Endpoint || '';
+                    document.getElementById('azureApiKey').value = config.AzureOpenAi.ApiKey || '';
+                    document.getElementById('azureDeployment').value = config.AzureOpenAi.Deployment || '';
+
+                    document.getElementById('awsAccessKeyId').value = config.Aws.AccessKeyId || '';
+                    document.getElementById('awsSecretAccessKey').value = config.Aws.SecretAccessKey || '';
+                    document.getElementById('awsRegion').value = config.Aws.Region || '';
+                    document.getElementById('awsModel').value = config.Aws.Model || '';
+
+                    Dashboard.hideLoadingMsg();
+                });
+            });
+
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                Dashboard.showLoadingMsg();
+
+                ApiClient.getPluginConfiguration(pluginId).then(function (config) {
+                    config.Provider = providerSelect.value;
+                    config.DefaultLanguage = document.getElementById('defaultLanguage').value;
+                    config.TimeoutSeconds = parseInt(document.getElementById('timeoutSeconds').value || '0', 10);
+                    config.OverwriteExisting = document.getElementById('overwriteExisting').checked;
+
+                    config.BaseUrl = document.getElementById('baseUrl').value;
+                    config.GeneratePath = document.getElementById('generatePath').value;
+                    config.ApiKey = document.getElementById('apiKey').value;
+                    config.UseBearerAuth = document.getElementById('useBearerAuth').checked;
+                    config.Model = document.getElementById('model').value;
+
+                    config.Local = config.Local || {};
+                    config.Local.Host = document.getElementById('localHost').value;
+                    config.Local.Token = document.getElementById('localToken').value;
+                    config.Local.Model = document.getElementById('localModel').value;
+
+                    config.OpenAi = config.OpenAi || {};
+                    config.OpenAi.ApiKey = document.getElementById('openAiApiKey').value;
+                    config.OpenAi.Model = document.getElementById('openAiModel').value;
+
+                    config.AzureOpenAi = config.AzureOpenAi || {};
+                    config.AzureOpenAi.Endpoint = document.getElementById('azureEndpoint').value;
+                    config.AzureOpenAi.ApiKey = document.getElementById('azureApiKey').value;
+                    config.AzureOpenAi.Deployment = document.getElementById('azureDeployment').value;
+
+                    config.Aws = config.Aws || {};
+                    config.Aws.AccessKeyId = document.getElementById('awsAccessKeyId').value;
+                    config.Aws.SecretAccessKey = document.getElementById('awsSecretAccessKey').value;
+                    config.Aws.Region = document.getElementById('awsRegion').value;
+                    config.Aws.Model = document.getElementById('awsModel').value;
+
+                    return ApiClient.updatePluginConfiguration(pluginId, config);
+                }).then(function () {
+                    Dashboard.processPluginConfigurationUpdateResult();
+                });
+            });
+        })();
+    </script>
+</body>
+</html>
